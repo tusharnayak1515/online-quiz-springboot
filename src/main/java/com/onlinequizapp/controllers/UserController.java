@@ -1,5 +1,7 @@
 package com.onlinequizapp.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -180,4 +182,18 @@ public class UserController {
         response.addCookie(cookie);
         return ResponseEntity.ok("Logout successful");
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> allUSers(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User myuser = this.customUserDetailsService.findOne(email);
+
+        if(!myuser.getRole().equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Allowed");
+        }
+        
+        List<User> users = this.customUserDetailsService.findAll();
+        return ResponseEntity.ok(users);
+    } 
 }

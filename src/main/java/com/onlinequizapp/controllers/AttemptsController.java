@@ -3,8 +3,13 @@ package com.onlinequizapp.controllers;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +24,9 @@ import com.onlinequizapp.dto.SubmitAnswerRequest;
 import com.onlinequizapp.entities.Attempt;
 import com.onlinequizapp.entities.Question;
 import com.onlinequizapp.entities.Quiz;
+import com.onlinequizapp.entities.User;
 import com.onlinequizapp.services.AttemptsService;
+import com.onlinequizapp.services.CustomUserDetailsService;
 import com.onlinequizapp.services.QuizService;
 
 @RestController
@@ -31,6 +38,9 @@ public class AttemptsController {
 
 	@Autowired
 	private AttemptsService attemptsService;
+
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
 
     @PostMapping("/start")
     public ResponseEntity<?> startAttempt(@RequestBody StartAttemptRequest request) {
@@ -91,5 +101,19 @@ public class AttemptsController {
             return ResponseEntity.ok(response);
         }
 
+    }
+
+    @GetMapping("/quiz/{id}")
+    public ResponseEntity<?> viewLeaderboardByQuizId(@PathVariable int id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User myuser = this.customUserDetailsService.findOne(email);
+
+        if(!myuser.getRole().equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Allowed");
+        }
+
+        Leaderboard leaderboard = this.attemptsService.getLeaderboardByQuizId(id);
+        return ResponseEntity.ok(leaderboard);
     }
 }
