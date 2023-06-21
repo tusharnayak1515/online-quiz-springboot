@@ -132,7 +132,7 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<?> updateProfile(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> updateProfile(@RequestBody User user, HttpServletResponse response) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User myuser = this.customUserDetailsService.findOne(email);
@@ -143,13 +143,16 @@ public class UserController {
 
         user = this.customUserDetailsService.update(user);
 
-        UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole());
+        Cookie cookie = new Cookie("authorization", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
 
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok("Profile updated. Login again to continue");
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest obj) throws Exception {
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest obj, HttpServletResponse response) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User myuser = this.customUserDetailsService.findOne(email);
@@ -161,9 +164,12 @@ public class UserController {
         myuser.setPassword(this.passwordEncoder.encode(obj.getNewPassword()));
         myuser = this.customUserDetailsService.update(myuser);
 
-        UserResponse userResponse = new UserResponse(myuser.getId(), myuser.getName(), myuser.getEmail(), myuser.getRole());
+        Cookie cookie = new Cookie("authorization", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
 
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok("Password updated successfully. Login again to continue.");
     }
 
     @PostMapping("/logout")

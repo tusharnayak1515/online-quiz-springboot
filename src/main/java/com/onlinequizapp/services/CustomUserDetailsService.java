@@ -65,6 +65,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = findById(userDto.getId());
         if(user != null) {
             user.setName(userDto.getName());
+            user.setEmail(userDto.getEmail());
             user = this.userRepo.save(user);
         }
         return user;
