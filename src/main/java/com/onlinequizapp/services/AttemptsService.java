@@ -1,6 +1,5 @@
 package com.onlinequizapp.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +14,6 @@ import com.onlinequizapp.entities.Question;
 import com.onlinequizapp.entities.Quiz;
 import com.onlinequizapp.entities.User;
 import com.onlinequizapp.repositories.AttemptsRepo;
-import com.onlinequizapp.repositories.QuizRepo;
 
 @Service
 public class AttemptsService {
