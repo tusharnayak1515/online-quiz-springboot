@@ -64,10 +64,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     public User update(User userDto) {
         User user = findById(userDto.getId());
         if(user != null) {
-            user.setId(userDto.getId());
-            this.userRepo.save(user);
+            user.setName(userDto.getName());
+            user = this.userRepo.save(user);
         }
-        return userDto;
+        return user;
     }
 
     public User createUser(User user) {

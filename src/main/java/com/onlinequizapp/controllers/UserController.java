@@ -13,10 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.onlinequizapp.dto.ChangePasswordRequest;
 import com.onlinequizapp.dto.JwtRequest;
 import com.onlinequizapp.dto.JwtResponse;
 import com.onlinequizapp.dto.RegisterRequest;
@@ -76,7 +78,6 @@ public class UserController {
         myresponse.setUser(userResponse);
         return ResponseEntity.ok(myresponse);
     }
-    
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServletResponse response) throws Exception {
@@ -119,10 +120,10 @@ public class UserController {
     }
     
     @GetMapping("/profile")
-    public ResponseEntity<JwtResponse> welcome(HttpServletRequest request) throws Exception {
+    public ResponseEntity<JwtResponse> profile(HttpServletRequest request) throws Exception {
    	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
        String email = authentication.getName();
-       User user = customUserDetailsService.findOne(email);
+       User user = this.customUserDetailsService.findOne(email);
        JwtResponse myresponse = new JwtResponse();
        UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole());
        myresponse.setSuccess(true);
@@ -130,16 +131,43 @@ public class UserController {
        return ResponseEntity.ok(myresponse);
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody User user) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User myuser = this.customUserDetailsService.findOne(email);
+
+        if(!myuser.getRole().equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Allowed");
+        }
+
+        user = this.customUserDetailsService.update(user);
+
+        UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getRole());
+
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest obj) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User myuser = this.customUserDetailsService.findOne(email);
+
+        if(!myuser.getRole().equals("admin")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Allowed");
+        }
+
+        myuser.setPassword(this.passwordEncoder.encode(obj.getNewPassword()));
+        myuser = this.customUserDetailsService.update(myuser);
+
+        UserResponse userResponse = new UserResponse(myuser.getId(), myuser.getName(), myuser.getEmail(), myuser.getRole());
+
+        return ResponseEntity.ok(userResponse);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        // Cookie[] cookies = request.getCookies();
-        // for(Cookie cookie:cookies) {
-        //     if(cookie.getName().equals("authorization")) {
-        //         cookie.setPath("/");
-        //         cookie.setMaxAge(0);
-        //         response.addCookie(cookie);
-        //     }
-        // }
         Cookie cookie = new Cookie("authorization", null);
         cookie.setPath("/");
         cookie.setMaxAge(0);

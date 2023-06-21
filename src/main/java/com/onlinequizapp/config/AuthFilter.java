@@ -36,7 +36,9 @@ public class AuthFilter extends OncePerRequestFilter {
         if(jwtCookies != null) {
             for(Cookie cookie:jwtCookies) {
                  if (cookie.getName().equals("authorization")) {
+                    // cookie.setValue(null);
                     // cookie.setMaxAge(0);
+                    // cookie.setPath("/");
                     // response.addCookie(cookie);
                      token = cookie.getValue();		 
                     //  System.out.println(token);

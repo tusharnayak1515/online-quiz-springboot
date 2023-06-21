@@ -43,7 +43,7 @@ public class QuestionsController {
 			QuestionResponse myResponse = new QuestionResponse();
 			myResponse.setSuccess(false);
 			myResponse.setError("Not Allowed!");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myResponse);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(myResponse);
 		}
 
 		List<Question> questions = this.questionsService.findAll();
@@ -64,7 +64,7 @@ public class QuestionsController {
 			QuestionResponse myResponse = new QuestionResponse();
 			myResponse.setSuccess(false);
 			myResponse.setError("Not Allowed!");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myResponse);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(myResponse);
 		}
 
 		question = this.questionsService.save(question);
@@ -85,7 +85,7 @@ public class QuestionsController {
 			QuestionResponse myResponse = new QuestionResponse();
 			myResponse.setSuccess(false);
 			myResponse.setError("Not Allowed!");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myResponse);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(myResponse);
 		}
 
 		question = this.questionsService.update(question);
@@ -105,7 +105,7 @@ public class QuestionsController {
 			QuestionResponse myResponse = new QuestionResponse();
 			myResponse.setSuccess(false);
 			myResponse.setError("Not Allowed!");
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myResponse);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(myResponse);
 		}
 
 		Optional<Question> question = this.questionsService.findById(id);

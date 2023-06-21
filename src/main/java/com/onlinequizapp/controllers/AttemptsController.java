@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.onlinequizapp.dto.Leaderboard;
 import com.onlinequizapp.dto.NextQuestion;
 import com.onlinequizapp.dto.QuizAttemptResponse;
+import com.onlinequizapp.dto.QuizCompletedResponse;
 import com.onlinequizapp.dto.StartAttemptRequest;
 import com.onlinequizapp.dto.SubmitAnswerRequest;
 import com.onlinequizapp.entities.Attempt;
@@ -57,12 +59,14 @@ public class AttemptsController {
         if(isCorrect) {
             if(index + 1 >= quiz.getQuestions().size()) {
                 attempt.setScore(attempt.getScore() + 1);
-                this.attemptsService.update(attempt);
-                return ResponseEntity.ok("Quiz is completed");
+                attempt = this.attemptsService.update(attempt);
+                Leaderboard leaderboard = this.attemptsService.getLeaderboardByQuizId(quiz.getQuizid());
+                QuizCompletedResponse response = new QuizCompletedResponse(attempt.getScore(), "Quiz is completed",leaderboard);
+                return ResponseEntity.ok(response);
             }
             else {
                 attempt.setScore(attempt.getScore() + 1);
-                this.attemptsService.update(attempt);
+                attempt = this.attemptsService.update(attempt);
                 nextQuestion = quiz.getQuestions().get(index+1);
                 this.attemptsService.setCurrentQuestion(request.getAttemptId(), nextQuestion);
             }
@@ -73,8 +77,8 @@ public class AttemptsController {
         }
         else {
             if(index + 1 >= quiz.getQuestions().size()) {
-                QuizAttemptResponse response = new QuizAttemptResponse();
-                response.setMessage("Incorrect Answer! Quiz Completed");
+                Leaderboard leaderboard = this.attemptsService.getLeaderboardByQuizId(quiz.getQuizid());
+                QuizCompletedResponse response = new QuizCompletedResponse(attempt.getScore(), "Incorrect Answer! Quiz Completed",leaderboard);
                 return ResponseEntity.ok(response);
             }
             nextQuestion = quiz.getQuestions().get(index+1);

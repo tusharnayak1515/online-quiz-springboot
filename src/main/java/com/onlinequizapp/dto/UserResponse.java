@@ -9,7 +9,7 @@ public class UserResponse {
 	public UserResponse() {
 		super();
 	}
-	
+
 	public UserResponse(int id, String name, String email, String role) {
 		super();
 		this.id = id;

@@ -3,8 +3,6 @@ package com.onlinequizapp.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.onlinequizapp.entities.Question;
-
 public class QuizRequest {
     private String title;
     private List<Integer> questions = new ArrayList<>();
