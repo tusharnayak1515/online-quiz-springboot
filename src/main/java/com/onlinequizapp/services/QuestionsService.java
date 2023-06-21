@@ -21,8 +21,7 @@ public class QuestionsService {
 	public Question update(Question questionDto) {
 		Optional<Question> question = findById(questionDto.getQuestionid());
 		if(question.isPresent()) {
-			Question myquestion = question.get();
-			return questionsRepo.save(myquestion);
+			return questionsRepo.save(questionDto);
 		}
 		return null;
 	}

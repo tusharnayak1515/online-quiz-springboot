@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -16,11 +18,17 @@ public class Attempt {
 	
 	private int score;
 	
-	@OneToOne
+	@ManyToOne
+    @JoinColumn(name = "user_id")
 	private User user;
 	
-	@OneToOne
+	@ManyToOne
+    @JoinColumn(name = "quiz_id")
 	private Quiz quiz;
+
+	@ManyToOne
+    @JoinColumn(name = "current_question_id")
+    private Question currentQuestion;
 	
 	public Attempt() {
 		super();
@@ -65,7 +73,15 @@ public class Attempt {
 	public void setQuiz(Quiz quiz) {
 		this.quiz = quiz;
 	}
-
+	
+	public Question getCurrentQuestion() {
+		return currentQuestion;
+	}
+	
+	public void setCurrentQuestion(Question currentQuestion) {
+		this.currentQuestion = currentQuestion;
+	}
+	
 	@Override
 	public String toString() {
 		return "Attempt [attemptid=" + attemptid + ", score="

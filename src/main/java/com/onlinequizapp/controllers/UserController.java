@@ -82,7 +82,10 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody RegisterRequest request, HttpServletResponse response) throws Exception {
     	User isUser = this.customUserDetailsService.findOne(request.getEmail());
         if(isUser != null) {
-            return ResponseEntity.ok(new JwtResponse(true, "This email is already taken!"));
+            JwtResponse myResponse = new JwtResponse();
+            myResponse.setSuccess(false);
+            myResponse.setError("This email is already taken");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(myResponse);
         }
         User newuser = new User();
         newuser.setName(request.getName());
@@ -125,5 +128,22 @@ public class UserController {
        myresponse.setSuccess(true);
        myresponse.setUser(userResponse);
        return ResponseEntity.ok(myresponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Cookie[] cookies = request.getCookies();
+        // for(Cookie cookie:cookies) {
+        //     if(cookie.getName().equals("authorization")) {
+        //         cookie.setPath("/");
+        //         cookie.setMaxAge(0);
+        //         response.addCookie(cookie);
+        //     }
+        // }
+        Cookie cookie = new Cookie("authorization", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.ok("Logout successful");
     }
 }

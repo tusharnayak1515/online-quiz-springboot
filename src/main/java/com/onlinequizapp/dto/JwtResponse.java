@@ -1,10 +1,9 @@
 package com.onlinequizapp.dto;
 
-import com.onlinequizapp.entities.User;
-
 public class JwtResponse {
     private boolean success;
     private String token;
+    private String error;
     private UserResponse user;
 
 	public UserResponse getUser() {
@@ -15,9 +14,11 @@ public class JwtResponse {
 		this.user = user;
 	}
 
-	public JwtResponse(boolean success, String token) {
+    public JwtResponse(boolean success, String token, String error, UserResponse user) {
         this.success = success;
         this.token = token;
+        this.error = error;
+        this.user = user;
     }
 
     public JwtResponse() {
@@ -39,9 +40,17 @@ public class JwtResponse {
         this.token = token;
     }
 
-	@Override
-	public String toString() {
-		return "JwtResponse [success=" + success + ", token=" + token + ", user=" + user + "]";
-	}
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    @Override
+    public String toString() {
+        return "JwtResponse [success=" + success + ", token=" + token + ", error=" + error + ", user=" + user + "]";
+    }
 }
 
