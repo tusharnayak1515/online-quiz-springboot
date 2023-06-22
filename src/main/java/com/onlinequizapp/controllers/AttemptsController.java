@@ -44,8 +44,11 @@ public class AttemptsController {
 
     @PostMapping("/start")
     public ResponseEntity<?> startAttempt(@RequestBody StartAttemptRequest request) {
-        Question question = this.quizService.startAttempt(request.getQuizId(), request.getUserId());
-         NextQuestion firstQuestion = new NextQuestion(question.getQuestionid(),question.getQuestion(),question.getOption1(),question.getOption2(), question.getOption3(),question.getOption4());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = this.customUserDetailsService.findOne(email);
+        Question question = this.quizService.startAttempt(request.getQuizId(), user.getId());
+        NextQuestion firstQuestion = new NextQuestion(question.getQuestionid(),question.getQuestion(),question.getOption1(),question.getOption2(), question.getOption3(),question.getOption4());
         QuizAttemptResponse response = new QuizAttemptResponse(firstQuestion);
         return ResponseEntity.ok(response);
     }
